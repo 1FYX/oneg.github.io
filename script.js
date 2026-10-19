@@ -9,6 +9,7 @@
   const projectDialog = $('#project-dialog');
   const input = $('#command-input');
   const output = $('#command-output');
+  const { t } = window.onegI18n;
   let typingTimer;
   let toastTimer;
   let projectCleanup = () => {};
@@ -86,11 +87,15 @@
   });
 
   const commands = [
-    { id: 'about', label: 'About me', hint: 'The person behind the pixels', symbol: '◉', action: () => navigateTo('about') },
-    { id: 'projects', label: 'Selected projects', hint: 'Explore the experiments', symbol: '⊞', action: () => navigateTo('projects') },
-    { id: 'contact', label: 'Connect', hint: 'Start a conversation', symbol: '↗', action: () => navigateTo('contact') },
-    { id: 'theme', label: 'Toggle theme', hint: 'A different perspective', symbol: '◐', action: () => typeReply(`> theme switched to ${toggleTheme()}.\nA fresh perspective, same curiosity.`) },
-    { id: 'help', label: 'Help', hint: 'See available commands', symbol: '?', action: () => typeReply('> available commands:\nabout · projects · contact · theme · help\nUse ↑ ↓ and Enter, or click a command.') }
+    { id: 'about', aliases: '关于 我', symbol: '◉', action: () => navigateTo('about') },
+    { id: 'projects', aliases: '作品 项目 探索', symbol: '⊞', action: () => navigateTo('projects') },
+    { id: 'contact', aliases: '联系 交流', symbol: '↗', action: () => navigateTo('contact') },
+    { id: 'theme', aliases: '主题 明暗 外观', symbol: '◐', action: () => typeReply(t('command.themeReply', { theme: t(toggleTheme()) })) },
+    { id: 'language', aliases: '语言 中文 英文 english chinese', symbol: '文', action: () => {
+      window.onegI18n.setLanguage(window.onegI18n.language === 'zh' ? 'en' : 'zh');
+      typeReply(t('command.languageReply'));
+    } },
+    { id: 'help', aliases: '帮助 命令', symbol: '?', action: () => typeReply(t('command.helpReply')) }
   ];
   let filteredCommands = commands;
   let selectedCommand = 0;
@@ -103,7 +108,7 @@
       const heading = $('h2', target);
       heading.setAttribute('tabindex', '-1');
       heading.focus({ preventScroll: true });
-      notify(`> opening ${section}…`);
+      notify(t('command.opening', { section: t(`command.${section}`) }));
     });
   }
 
@@ -116,7 +121,10 @@
   function renderCommands() {
     const list = $('#command-list');
     const query = input.value.trim().toLowerCase().replace(/^>\s*/, '');
-    filteredCommands = commands.filter(command => `${command.id} ${command.label}`.toLowerCase().includes(query));
+    filteredCommands = commands.filter(command => {
+      const { messages } = window.onegI18n;
+      return `${command.id} ${command.aliases} ${messages.en[`command.${command.id}`]} ${messages.zh[`command.${command.id}`]}`.toLowerCase().includes(query);
+    });
     selectedCommand = Math.min(selectedCommand, Math.max(0, filteredCommands.length - 1));
     list.replaceChildren();
     filteredCommands.forEach((command, index) => {
@@ -128,9 +136,9 @@
       symbol.className = 'command-option-symbol';
       symbol.textContent = command.symbol;
       const label = document.createElement('span');
-      label.textContent = command.label;
+      label.textContent = t(`command.${command.id}`);
       const hint = document.createElement('small');
-      hint.textContent = command.hint;
+      hint.textContent = t(`command.${command.id}Hint`);
       option.append(symbol, label, hint);
       option.addEventListener('click', command.action);
       option.addEventListener('pointermove', () => {
@@ -141,7 +149,7 @@
     if (!filteredCommands.length) {
       const empty = document.createElement('p');
       empty.className = 'no-results';
-      empty.textContent = 'No command found. Try about, projects, contact, or theme.';
+      empty.textContent = t('command.noResults');
       list.append(empty);
     }
     updateSelection();
@@ -167,6 +175,7 @@
   });
   input.addEventListener('input', () => { selectedCommand = 0; renderCommands(); });
   input.addEventListener('keydown', event => {
+    if (event.isComposing) return;
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
       if (!filteredCommands.length) return;
@@ -175,13 +184,13 @@
     } else if (event.key === 'Enter') {
       event.preventDefault();
       if (filteredCommands[selectedCommand]) filteredCommands[selectedCommand].action();
-      else typeReply('> command not found.\nTry: about, projects, contact, theme, or help.');
+      else typeReply(t('command.unknown'));
     }
   });
 
   const projectContent = {
-    orbit: { title: 'Orbit', number: '001', label: 'INTERFACE DESIGN / INTERACTIVE CONCEPT', description: 'An experiment in connected thinking. Pick two ideas below and see where they meet. A small prototype of an interface for making unexpected connections.' },
-    signal: { title: 'Signal', number: '002', label: 'DEVELOPER TOOLS / INTERACTIVE CONCEPT', description: 'A tiny dashboard for the environment you’re in right now. These readings come directly from your browser — a live experiment in turning local data into something useful.' }
+    orbit: { title: 'Orbit', number: '001' },
+    signal: { title: 'Signal', number: '002' }
   };
 
   $$('[data-project]').forEach(button => button.addEventListener('click', () => {
@@ -189,8 +198,8 @@
     const project = projectContent[id];
     $('#project-dialog-title').textContent = project.title;
     $('#experiment-id').textContent = project.number;
-    $('#project-dialog-label').textContent = project.label;
-    $('#project-dialog-description').textContent = project.description;
+    $('#project-dialog-label').textContent = t(`project.${id}Label`);
+    $('#project-dialog-description').textContent = t(`project.${id}Description`);
     const demo = $('#project-demo');
     demo.replaceChildren();
     if (id === 'orbit') createOrbitDemo(demo); else createSignalDemo(demo);
@@ -200,30 +209,33 @@
   function createOrbitDemo(container) {
     const stage = document.createElement('div');
     stage.className = 'demo-stage';
-    stage.innerHTML = '<p class="demo-hint">01 / SELECT TWO IDEAS TO CONNECT</p><div class="demo-orbit"></div><p class="demo-result" aria-live="polite">Every connection starts with a little curiosity.</p>';
+    stage.innerHTML = '<p class="demo-hint"></p><div class="demo-orbit"></div><p class="demo-result" aria-live="polite"></p>';
+    $('.demo-hint', stage).textContent = t('demo.orbitHint');
+    $('.demo-result', stage).textContent = t('demo.initial');
     const selected = [];
     const responses = {
-      'Code + Design': 'Thoughtful interfaces. Where function finds its form.',
-      'AI + Code': 'A creative copilot. New tools for new kinds of building.',
-      'Code + Curiosity': 'An experiment worth making. Start small, see what happens.',
-      'AI + Design': 'A new canvas. Explore an idea, then make it your own.',
-      'Curiosity + Design': 'A better question. What if an interface felt different?',
-      'AI + Curiosity': 'An open frontier. Follow the questions without easy answers.'
+      'Code + Design': 'response.CodeDesign',
+      'AI + Code': 'response.AICode',
+      'Code + Curiosity': 'response.CodeCuriosity',
+      'AI + Design': 'response.AIDesign',
+      'Curiosity + Design': 'response.CuriosityDesign',
+      'AI + Curiosity': 'response.AICuriosity'
     };
     ['Code', 'Design', 'AI', 'Curiosity'].forEach(idea => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'demo-node';
-      button.textContent = idea;
+      button.textContent = t(`idea.${idea}`);
+      button.dataset.idea = idea;
       button.setAttribute('aria-pressed', 'false');
       button.addEventListener('click', () => {
         const index = selected.indexOf(idea);
         if (index !== -1) selected.splice(index, 1);
         else { if (selected.length === 2) selected.shift(); selected.push(idea); }
-        $$('.demo-node', stage).forEach(node => node.setAttribute('aria-pressed', String(selected.includes(node.textContent))));
+        $$('.demo-node', stage).forEach(node => node.setAttribute('aria-pressed', String(selected.includes(node.dataset.idea))));
         $('.demo-result', stage).textContent = selected.length === 2
-          ? `${selected.join(' + ')} → ${responses[[...selected].sort().join(' + ')]}`
-          : selected.length ? `${selected[0]} + a new perspective. Pick one more idea.` : 'Every connection starts with a little curiosity.';
+          ? `${selected.map(item => t(`idea.${item}`)).join(' + ')} → ${t(responses[[...selected].sort().join(' + ')])}`
+          : selected.length ? t('demo.oneSelected', { idea: t(`idea.${selected[0]}`) }) : t('demo.initial');
       });
       $('.demo-orbit', stage).append(button);
     });
@@ -234,14 +246,15 @@
   function createSignalDemo(container) {
     const stage = document.createElement('div');
     stage.className = 'demo-stage';
-    stage.innerHTML = '<p class="demo-hint">LIVE / YOUR BROWSER ENVIRONMENT</p><dl class="live-metrics"><div><dt>VIEWPORT</dt><dd data-metric="viewport"></dd></div><div><dt>LOCAL TIME</dt><dd data-metric="time"></dd></div><div><dt>NETWORK</dt><dd data-metric="network"></dd></div><div><dt>MOTION PREFERENCE</dt><dd data-metric="motion"></dd></div></dl><button class="button button-primary" type="button">Refresh readings ↗</button><p class="demo-hint" style="margin-top:16px">Network indicates browser connectivity, not service reachability.</p>';
+    stage.innerHTML = '<p class="demo-hint" data-demo-label="demo.signalHint"></p><dl class="live-metrics"><div><dt data-demo-label="demo.viewport"></dt><dd data-metric="viewport"></dd></div><div><dt data-demo-label="demo.time"></dt><dd data-metric="time"></dd></div><div><dt data-demo-label="demo.network"></dt><dd data-metric="network"></dd></div><div><dt data-demo-label="demo.motion"></dt><dd data-metric="motion"></dd></div></dl><button class="button button-primary" type="button" data-demo-label="demo.refresh"></button><p class="demo-hint" style="margin-top:16px" data-demo-label="demo.networkNote"></p>';
+    $$('[data-demo-label]', stage).forEach(element => { element.textContent = t(element.dataset.demoLabel); });
     function refresh() {
       $('[data-metric="viewport"]', stage).textContent = `${innerWidth} × ${innerHeight}`;
-      $('[data-metric="time"]', stage).textContent = new Date().toLocaleTimeString([], { hour12: false });
-      $('[data-metric="network"]', stage).textContent = navigator.onLine ? 'Online' : 'Offline';
-      $('[data-metric="motion"]', stage).textContent = reducedMotion.matches ? 'Reduced' : 'Standard';
+      $('[data-metric="time"]', stage).textContent = new Date().toLocaleTimeString(window.onegI18n.language === 'zh' ? 'zh-CN' : 'en-GB', { hour12: false });
+      $('[data-metric="network"]', stage).textContent = t(navigator.onLine ? 'demo.online' : 'demo.offline');
+      $('[data-metric="motion"]', stage).textContent = t(reducedMotion.matches ? 'demo.reduced' : 'demo.standard');
     }
-    $('button', stage).addEventListener('click', () => { refresh(); notify('> readings refreshed.'); });
+    $('button', stage).addEventListener('click', () => { refresh(); notify(t('demo.refreshed')); });
     refresh();
     const interval = setInterval(refresh, 1000);
     projectCleanup = () => clearInterval(interval);
@@ -251,7 +264,7 @@
   $('#copy-link').addEventListener('click', async () => {
     const url = new URL(location.href);
     url.hash = '';
-    try { await navigator.clipboard.writeText(url.href); notify('Site link copied. Pass the curiosity on.'); }
+    try { await navigator.clipboard.writeText(url.href); notify(t('copy.success')); }
     catch (_) {
       const text = document.createElement('textarea');
       text.value = url.href;
@@ -262,8 +275,17 @@
       try { copied = document.execCommand('copy'); } catch (_) { /* Show a useful fallback. */ }
       text.remove();
       $('#copy-link').focus();
-      notify(copied ? 'Site link copied.' : 'Copy the site address from your browser’s address bar.');
+      notify(t(copied ? 'copy.success' : 'copy.fallback'));
     }
+  });
+
+  document.addEventListener('oneg:languagechange', () => {
+    clearInterval(typingTimer);
+    clearTimeout(toastTimer);
+    output.replaceChildren();
+    $('#toast').classList.remove('visible');
+    // A language command can change locale while this dialog is open.
+    if (commandDialog.open) { input.value = ''; selectedCommand = 0; renderCommands(); }
   });
 
   // A single on-demand animation loop smooths cursor, glow, and magnetic snapping.
