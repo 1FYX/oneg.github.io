@@ -1,11 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0A0A0C">
+  <meta name="description" content="oneg — exploring the intersection of code, design, and what's next. A personal space for ideas and interactive experiments.">
+  <title>oneg — Code, craft & curiosity</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230a0a0c'/%3E%3Cpath d='M18 44L30 20M34 44L46 20' stroke='%2300f2fe' stroke-width='5'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="script.js"></script>
 </head>
 <body>
-    Hello World!
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
+    <symbol id="arrow-down" viewBox="0 0 24 24"><path d="M12 4v16m-6-6 6 6 6-6"/></symbol>
+    <symbol id="command" viewBox="0 0 24 24"><path d="M9 7V5a2 2 0 1 0-2 2h10a2 2 0 1 0-2-2v14a2 2 0 1 0 2-2H7a2 2 0 1 0 2 2Z"/></symbol>
+    <symbol id="github" viewBox="0 0 24 24"><path d="M9 19c-4.3 1.3-4.3-2.2-6-2.7M15 22v-3.4c0-1 .1-1.5-.5-2.1 3.3-.4 6.8-1.6 6.8-7.3a5.6 5.6 0 0 0-1.5-3.9 5.2 5.2 0 0 0-.1-3.9s-1.2-.4-4 1.5a13.5 13.5 0 0 0-7.3 0c-2.8-1.9-4-1.5-4-1.5a5.2 5.2 0 0 0-.1 3.9 5.6 5.6 0 0 0-1.5 3.9c0 5.7 3.5 6.9 6.8 7.3-.5.5-.7 1.1-.6 2.1V22"/></symbol>
+    <symbol id="terminal" viewBox="0 0 24 24"><path d="m5 7 5 5-5 5m8 0h6"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></symbol>
+  </defs></svg>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="ambient-glow" aria-hidden="true"></div><div class="cursor-ring" aria-hidden="true"></div><div class="cursor-dot" aria-hidden="true"></div>
+  <header class="site-header shell">
+    <a class="wordmark magnetic" href="#" aria-label="oneg home"><span class="brand-mark">//</span> oneg<span class="brand-period">.</span></a>
+    <nav aria-label="Main navigation"><a href="#about">About</a><a href="#projects">Work<span class="nav-count">02</span></a><a href="#contact">Connect <svg class="icon"><use href="#arrow-up-right"/></svg></a></nav>
+    <button class="command-trigger magnetic" type="button" data-open-command aria-label="Open command menu"><svg class="icon"><use href="#command"/></svg><span>K</span></button>
+  </header>
+  <main id="main">
+    <section class="hero shell" aria-labelledby="hero-heading">
+      <div class="hero-content">
+        <div class="eyebrow reveal"><span class="status-dot"></span> A LITTLE CODE. A LOT OF CURIOSITY.</div>
+        <h1 id="hero-heading" class="reveal">Hello, I'm <span class="name">oneg<span class="typing-cursor" aria-hidden="true">_</span></span><br>Building beyond<br><span class="muted-heading">the ordinary.</span></h1>
+        <p class="hero-description reveal">At the intersection of code, design, and what's next.<br class="desktop-break"> Turning curious ideas into thoughtful digital experiences.</p>
+        <div class="hero-actions reveal"><a class="button button-primary magnetic" href="#projects">Explore my work <svg class="icon"><use href="#arrow-up-right"/></svg></a><a class="text-link magnetic" href="#contact">Let's connect <span>↗</span></a></div>
+        <div class="hero-status reveal"><span class="status-dot"></span><span>Currently exploring <strong>creative development</strong></span></div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art-coordinate coordinate-top"><span>EXPERIMENT_001</span><span>LIVE RENDER</span></div><div class="orbit-halo"></div>
+        <svg class="orbital" viewBox="0 0 600 600" fill="none">
+          <defs><radialGradient id="sphere-fill"><stop stop-color="#00F2FE" stop-opacity=".07"/><stop offset="1" stop-color="#00F2FE" stop-opacity=".015"/></radialGradient><linearGradient id="orbit-stroke" x1="120" y1="100" x2="480" y2="500" gradientUnits="userSpaceOnUse"><stop stop-color="#00F2FE" stop-opacity=".75"/><stop offset=".45" stop-color="#00F2FE" stop-opacity=".15"/><stop offset="1" stop-color="#00F2FE" stop-opacity=".55"/></linearGradient><filter id="point-glow"><feGaussianBlur stdDeviation="4"/></filter></defs>
+          <path class="art-cross" d="M300 20v560M20 300h560" stroke-dasharray="2 7"/><circle cx="300" cy="300" r="248" class="outer-orbit" stroke-dasharray="2 9"/><circle cx="300" cy="300" r="206" class="outer-orbit"/>
+          <g transform="rotate(-24 300 300)"><ellipse cx="300" cy="300" rx="272" ry="92" stroke="url(#orbit-stroke)"/><ellipse cx="300" cy="300" rx="261" ry="101" stroke="url(#orbit-stroke)" opacity=".3"/></g>
+          <g class="sphere-wire" transform="rotate(-24 300 300)"><circle cx="300" cy="300" r="155" fill="url(#sphere-fill)"/><g stroke="url(#orbit-stroke)" stroke-width=".8"><circle cx="300" cy="300" r="155"/><ellipse cx="300" cy="300" rx="130" ry="155"/><ellipse cx="300" cy="300" rx="88" ry="155"/><ellipse cx="300" cy="300" rx="34" ry="155"/><ellipse cx="300" cy="300" rx="155" ry="130"/><ellipse cx="300" cy="300" rx="155" ry="88"/><ellipse cx="300" cy="300" rx="155" ry="34"/><path d="M145 300h310M300 145v310"/></g></g>
+          <g class="satellite"><circle cx="539" cy="187" r="8" fill="#00F2FE" opacity=".5" filter="url(#point-glow)"/><circle cx="539" cy="187" r="3.5" fill="#b9fcff"/></g><circle cx="119" cy="443" r="3" fill="#00F2FE"/><path d="M104 443h-31l-22 22" stroke="#00F2FE" opacity=".3"/><circle cx="300" cy="52" r="2" fill="#00F2FE" opacity=".6"/>
+        </svg>
+        <div class="art-label"><span class="tiny-cross">+</span><span>IDEAS IN ORBIT<br><small>ALWAYS IN MOTION.</small></span></div><div class="art-coordinate coordinate-bottom"><span>CODE · DESIGN · CURIOSITY</span><span>∞ POSSIBILITIES</span></div>
+      </div>
+      <div class="hero-bottom"><a href="#projects" class="scroll-cue"><svg class="icon"><use href="#arrow-down"/></svg> SCROLL TO EXPLORE</a><span class="hero-note">DESIGNED WITH INTENTION. BUILT WITH CURIOSITY.</span><span class="section-index">01 — 04</span></div>
+    </section>
+    <section id="projects" class="projects shell section" aria-labelledby="work-heading">
+      <div class="section-heading"><div><p class="eyebrow section-eyebrow">01 / SELECTED EXPLORATIONS</p><h2 id="work-heading">Ideas, made tangible<span>.</span></h2></div><p class="section-description">A small collection of experiments.<br> Each one, a new possibility.</p></div>
+      <div class="project-grid">
+        <button class="project-card tilt-card" type="button" data-project="orbit" aria-label="Explore Orbit, an interactive interface experiment">
+          <div class="project-preview orbit-preview"><div class="preview-toolbar"><span class="preview-logo">◉ orbit</span><span>YOUR NEXT IDEA STARTS HERE</span><span class="preview-dots">•••</span></div><div class="canvas-grid"><svg class="node-connectors" viewBox="0 0 540 260" preserveAspectRatio="none"><path d="M270 130C205 130 215 61 145 61M270 130C345 130 330 61 407 61M270 130C205 130 215 205 124 205M270 130C345 130 330 205 409 205"/></svg><div class="concept-node node-one"><span class="node-icon">✳</span> Discover</div><div class="concept-node node-two"><span class="node-icon">⌘</span> Build</div><div class="concept-node node-center"><span class="node-icon">◈</span> A new perspective</div><div class="concept-node node-three"><span class="node-icon">↗</span> Explore</div><div class="concept-node node-four"><span class="node-icon">⊞</span> Connect</div><span class="canvas-note">A SPACE FOR CONNECTED THINKING</span><span class="canvas-zoom">− &nbsp; 100% &nbsp; +</span></div></div>
+          <div class="project-info"><div class="project-title-row"><h3>Orbit</h3><span class="project-arrow"><svg class="icon"><use href="#arrow-up-right"/></svg></span></div><p>A playground for connected ideas.</p><div class="project-tags"><span>INTERFACE DESIGN</span><span>INTERACTIVE CONCEPT</span><span class="project-number">001</span></div></div>
+        </button>
+        <button class="project-card tilt-card" type="button" data-project="signal" aria-label="Explore Signal, a developer dashboard experiment">
+          <div class="project-preview signal-preview"><div class="signal-window"><div class="terminal-bar"><span class="window-dots"><i></i><i></i><i></i></span><span>signal — local environment</span><span>⌘ 1</span></div><div class="terminal-body"><p><span class="terminal-prompt">~ ❯</span> signal --overview</p><p class="terminal-muted">A little clarity in the noise.</p><div class="signal-stats"><div><small>ENVIRONMENT</small><strong>Local<span> ↗</span></strong></div><div><small>EXPERIMENT</small><strong>002<span class="terminal-muted"> / ∞</span></strong></div><div><small>STATUS</small><strong class="terminal-green">● Online</strong></div></div><div class="signal-chart" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="terminal-footer"><span>LESS NOISE. MORE SIGNAL.</span><span>▌</span></div></div></div></div>
+          <div class="project-info"><div class="project-title-row"><h3>Signal</h3><span class="project-arrow"><svg class="icon"><use href="#arrow-up-right"/></svg></span></div><p>A clearer view of your digital workspace.</p><div class="project-tags"><span>DEVELOPER TOOLS</span><span>INTERACTIVE CONCEPT</span><span class="project-number">002</span></div></div>
+        </button>
+      </div><a class="github-more text-link" href="https://github.com/1FYX" target="_blank" rel="noopener noreferrer">More things on GitHub <svg class="icon"><use href="#arrow-up-right"/></svg></a>
+    </section>
+    <section id="about" class="about shell section" aria-labelledby="about-heading"><div class="about-intro"><p class="eyebrow section-eyebrow">02 / THE PERSON BEHIND THE PIXELS</p><h2 id="about-heading">Curiosity is<br>the starting point<span>.</span></h2><p>I'm oneg. I like exploring what happens when thoughtful design meets expressive code.</p><p>This is my little corner of the internet — a place to build, experiment, and follow the interesting questions.</p></div><div class="focus-card tilt-card"><div class="focus-header"><span class="eyebrow">CURRENT FOCUS</span><span class="status-dot"></span></div><div class="focus-row"><span class="focus-symbol">&lt;/&gt;</span><div><h3>Creative development</h3><p>Interfaces that feel as good as they work.</p></div><span class="focus-index">01</span></div><div class="focus-row"><span class="focus-symbol">✳</span><div><h3>Design engineering</h3><p>The details between an idea and an experience.</p></div><span class="focus-index">02</span></div><div class="focus-row"><span class="focus-symbol">◈</span><div><h3>AI & new possibilities</h3><p>Exploring the tools shaping what comes next.</p></div><span class="focus-index">03</span></div><div class="focus-bottom"><svg class="icon"><use href="#terminal"/></svg><span>Always learning. Always a work in progress.</span></div></div></section>
+    <section id="contact" class="contact shell section" aria-labelledby="contact-heading"><p class="eyebrow section-eyebrow">03 / OPEN A NEW CONNECTION</p><div class="contact-main"><h2 id="contact-heading">Something in mind?<br><span>Let's make it happen.</span></h2><a class="contact-button magnetic" href="https://github.com/1FYX" target="_blank" rel="noopener noreferrer" aria-label="Connect with oneg on GitHub"><svg class="icon"><use href="#arrow-up-right"/></svg></a></div><div class="contact-bottom"><p>Good things start with a conversation.</p><a class="social-link magnetic" href="https://github.com/1FYX" target="_blank" rel="noopener noreferrer"><svg class="icon" data-lucide="github"><use href="#github"/></svg> GitHub <svg class="icon small"><use href="#arrow-up-right"/></svg></a><button class="social-link magnetic" id="copy-link" type="button"><svg class="icon"><use href="#copy"/></svg><span>Copy site link</span></button></div></section>
+  </main>
+  <footer class="site-footer shell"><a class="wordmark" href="#"><span class="brand-mark">//</span> oneg<span class="brand-period">.</span></a><p>© <span id="year">2026</span> oneg. Made of code & curiosity.</p><button class="footer-command" type="button" data-open-command><span class="status-dot"></span> A SHORTCUT TO ANYWHERE <kbd id="shortcut-hint">⌘ K</kbd></button><a class="back-top" href="#" aria-label="Back to top">↑</a></footer>
+  <dialog id="command-dialog" class="command-dialog" aria-labelledby="command-title"><div class="command-topline"><span><svg class="icon"><use href="#terminal"/></svg><span id="command-title">oneg / command center</span></span><button class="icon-button" type="button" data-close-dialog aria-label="Close command menu"><svg class="icon"><use href="#x"/></svg></button></div><div class="command-input-row"><span class="terminal-prompt">❯</span><input id="command-input" type="text" placeholder="Where would you like to go?" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-controls="command-list" aria-expanded="true" aria-label="Search commands"></div><div id="command-list" role="listbox" aria-label="Commands"></div><p id="command-output" class="command-output" role="status" aria-live="polite"></p><div class="command-help"><span><kbd>↑</kbd><kbd>↓</kbd> navigate <kbd>↵</kbd> run</span><span><kbd>esc</kbd> close</span></div></dialog>
+  <dialog id="project-dialog" class="project-dialog" aria-labelledby="project-dialog-title"><div class="command-topline"><span>EXPERIMENT LAB / <span id="experiment-id">001</span></span><button class="icon-button" type="button" data-close-dialog aria-label="Close experiment"><svg class="icon"><use href="#x"/></svg></button></div><div class="project-dialog-body"><p class="eyebrow" id="project-dialog-label">INTERACTIVE CONCEPT</p><h2 id="project-dialog-title">Orbit</h2><p id="project-dialog-description"></p><div id="project-demo"></div></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
