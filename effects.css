@@ -1,0 +1,116 @@
+/* Motion studies inspired by React Bits, implemented for this buildless site. */
+:root {
+  --name-gradient: linear-gradient(105deg, #00f2fe 8%, #72edeb 45%, #679dff 85%);
+  --aurora-blue: rgba(41, 97, 255, .12);
+  --motion-ease: cubic-bezier(.16, 1, .3, 1);
+  --card-rest-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+  --card-hover-shadow: 0 18px 54px rgba(0, 0, 0, .22), 0 0 32px rgba(var(--accent-rgb), .035);
+}
+html[data-theme=light] {
+  --name-gradient: linear-gradient(105deg, #006b7b 8%, #087b88 45%, #345fbc 85%);
+  --aurora-blue: rgba(41, 97, 255, .055);
+  --card-rest-shadow: 0 4px 20px rgba(28, 55, 75, .035);
+  --card-hover-shadow: 0 18px 48px rgba(28, 55, 75, .1), 0 0 28px rgba(var(--accent-rgb), .03);
+}
+
+.hero { isolation: isolate; }
+.hero-content { z-index: 2; }
+.hero-art { z-index: 1; }
+.hero-atmosphere {
+  position: absolute;
+  inset: 0 0 70px;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(180deg, transparent, #000 12%, #000 80%, transparent);
+}
+.hero-aurora {
+  position: absolute;
+  width: 80%;
+  height: 85%;
+  top: 5%;
+  right: -12%;
+  background: radial-gradient(ellipse at 45% 50%, rgba(var(--accent-rgb), .075), transparent 60%), radial-gradient(ellipse at 75% 25%, var(--aurora-blue), transparent 60%);
+  filter: blur(32px);
+  animation: aurora-drift 14s ease-in-out infinite alternate;
+}
+.atmosphere-paused .hero-aurora { animation-play-state: paused; }
+.hero-line { display: inline-block; vertical-align: top; max-width: 100%; }
+.name { background: var(--name-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; }
+.typing-cursor { color: var(--accent); }
+.button.magnetic, .contact-button.magnetic { translate: var(--magnet-x, 0px) var(--magnet-y, 0px); }
+.button .icon, .contact-button .icon { transition: transform .3s var(--motion-ease); }
+.button:hover .icon, .button:focus-visible .icon { transform: translate(3px, -3px); }
+.contact-button:hover .icon, .contact-button:focus-visible .icon { transform: translate(4px, -4px); }
+
+/* A shared component language: soft shells, clear hierarchy, light on demand. */
+.project-card { border-radius: 16px; box-shadow: var(--card-rest-shadow); transition: border-color .3s, box-shadow .3s; }
+.project-preview { border-radius: 15px 15px 0 0; }
+.project-info { padding: 28px; }
+.project-tags > span:not(:last-child) { border-radius: 999px; padding-inline: 10px; }
+.project-arrow { width: 34px; height: 34px; }
+.focus-card { border-radius: 14px; }
+.button-primary { position: relative; overflow: hidden; border-radius: 8px; }
+.button-primary::after {
+  content: '';
+  position: absolute;
+  inset: -100% -80%;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 43%, rgba(255, 255, 255, .24) 50%, transparent 57%);
+  transform: translateX(-75%);
+  transition: transform .4s var(--motion-ease);
+}
+.button-primary:hover::after, .button-primary:focus-visible::after { transform: translateX(75%); }
+
+/* The existing radial spotlight now also illuminates the edge of the card. */
+.tilt-card::before {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: radial-gradient(260px circle at var(--mouse-x) var(--mouse-y), rgba(var(--accent-rgb), .8), transparent 70%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s;
+}
+.tilt-card:focus-visible::before { opacity: .6; }
+.node-connectors { overflow: visible; }
+.node-flow { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 8 170; stroke-linecap: round; opacity: 0; }
+.signal-chart span { transform-origin: bottom; }
+.signal-chart span:nth-child(3n) { --chart-delay: -.3s; }
+.signal-chart span:nth-child(3n + 1) { --chart-delay: -.6s; }
+.signal-chart span:nth-child(3n + 2) { --chart-delay: -.9s; }
+
+@media (hover: hover) and (pointer: fine) {
+  .project-card:hover { box-shadow: var(--card-hover-shadow); }
+  .tilt-card:hover::before { opacity: 1; }
+  .project-card:hover .node-flow { opacity: .7; animation: node-flow 2.8s linear infinite; }
+  .project-card:hover .signal-chart span { animation: chart-pulse 1.3s ease-in-out var(--chart-delay, 0s) infinite alternate; }
+}
+@keyframes aurora-drift { to { transform: translate(-4%, 4%) rotate(-8deg) scale(1.08); } }
+@keyframes node-flow { to { stroke-dashoffset: -178; } }
+@keyframes chart-pulse { from { transform: scaleY(.7); } to { transform: scaleY(1.08); } }
+
+@media (max-width: 900px) {
+  .hero-aurora { opacity: .65; }
+}
+@media (max-width: 600px) {
+  .hero-atmosphere { bottom: 60px; }
+  .project-info { padding: 22px; }
+  .hero-aurora { width: 115%; top: 22%; right: -35%; opacity: .55; }
+}
+@media (hover: none), (pointer: coarse) {
+  .hero-aurora { animation: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-aurora, .node-flow, .signal-chart span { animation: none !important; }
+  .button.magnetic, .contact-button.magnetic { translate: none !important; }
+  .button .icon, .contact-button .icon { transform: none !important; }
+  .button-primary::after { display: none; }
+}

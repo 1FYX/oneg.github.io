@@ -293,6 +293,7 @@
   const dot = $('.cursor-dot');
   const glow = $('.ambient-glow');
   let pointerX = 0, pointerY = 0, ringX = 0, ringY = 0;
+  let magnetX = 0, magnetY = 0;
   let frameId = 0, activeMagnet = null, activeCard = null, pointerVisible = false;
   const canAnimatePointer = () => finePointer.matches && !reducedMotion.matches;
 
@@ -302,8 +303,19 @@
     let targetX = pointerX, targetY = pointerY;
     if (activeMagnet) {
       const box = activeMagnet.getBoundingClientRect();
-      targetX += (box.left + box.width / 2 - pointerX) * .24;
-      targetY += (box.top + box.height / 2 - pointerY) * .24;
+      const movable = activeMagnet.matches('.button, .contact-button');
+      const centerX = box.left + box.width / 2 - (movable ? magnetX : 0);
+      const centerY = box.top + box.height / 2 - (movable ? magnetY : 0);
+      if (movable) {
+        const desiredX = Math.max(-6, Math.min(6, (pointerX - centerX) * .14));
+        const desiredY = Math.max(-6, Math.min(6, (pointerY - centerY) * .14));
+        magnetX += (desiredX - magnetX) * .2;
+        magnetY += (desiredY - magnetY) * .2;
+        activeMagnet.style.setProperty('--magnet-x', `${magnetX}px`);
+        activeMagnet.style.setProperty('--magnet-y', `${magnetY}px`);
+      }
+      targetX += (centerX + magnetX - pointerX) * .24;
+      targetY += (centerY + magnetY - pointerY) * .24;
     }
     ringX += (targetX - ringX) * .22;
     ringY += (targetY - ringY) * .22;
@@ -320,11 +332,24 @@
     else { card.style.transition = 'transform .3s ease-out'; card.style.transform = ''; }
   }
 
+  function resetMagnet() {
+    if (activeMagnet && (magnetX || magnetY)) {
+      // Settle the visual offset without moving the button's layout box.
+      if (!reducedMotion.matches && activeMagnet.animate) {
+        activeMagnet.animate([{ translate: `${magnetX}px ${magnetY}px` }, { translate: '0px 0px' }], { duration: 260, easing: 'cubic-bezier(.16, 1, .3, 1)' });
+      }
+      activeMagnet.style.removeProperty('--magnet-x');
+      activeMagnet.style.removeProperty('--magnet-y');
+    }
+    magnetX = magnetY = 0;
+  }
+
   function hidePointer() {
     pointerVisible = false;
     root.classList.remove('cursor-enabled');
     ring.style.opacity = dot.style.opacity = glow.style.opacity = '0';
     ring.classList.remove('is-hover', 'is-down');
+    resetMagnet();
     activeMagnet = null;
     if (activeCard) resetCard(activeCard);
     activeCard = null;
@@ -341,7 +366,9 @@
       ring.style.opacity = dot.style.opacity = glow.style.opacity = '1';
       root.classList.add('cursor-enabled');
     }
-    activeMagnet = event.target.closest('.magnetic');
+    const nextMagnet = event.target.closest('.magnetic');
+    if (nextMagnet !== activeMagnet) resetMagnet();
+    activeMagnet = nextMagnet;
     ring.classList.toggle('is-hover', !!event.target.closest('a, button'));
     const card = event.target.closest('.tilt-card');
     if (activeCard && card !== activeCard) resetCard(activeCard);
@@ -367,9 +394,5 @@
   finePointer.addEventListener('change', hidePointer);
   reducedMotion.addEventListener('change', hidePointer);
 
-  // Content is visible by default, even when any external CDN is unavailable.
-  if (window.gsap && !reducedMotion.matches) {
-    window.gsap.from('.reveal', { y: 16, opacity: 0, duration: .4, stagger: .065, ease: 'power2.out', clearProps: 'all' });
-    window.gsap.from('.hero-art', { opacity: 0, duration: .4, ease: 'power2.out', clearProps: 'opacity' });
-  }
+  // Entrance motion is owned by effects.js; core content stays visible by default.
 })();
